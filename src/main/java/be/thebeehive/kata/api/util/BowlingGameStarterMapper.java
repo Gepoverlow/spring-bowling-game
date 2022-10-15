@@ -2,20 +2,15 @@ package be.thebeehive.kata.api.util;
 
 import be.thebeehive.kata.api.dto.CreateGameDto;
 import be.thebeehive.kata.api.model.BowlingGameModel;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@AllArgsConstructor
 public class BowlingGameStarterMapper {
 
     GameIdGenerator gameIdGenerator;
     private final int STARTING_SCORE = 0;
-
-
-    public BowlingGameStarterMapper(GameIdGenerator gameIdGenerator){
-
-        this.gameIdGenerator = gameIdGenerator;
-
-    }
 
     public BowlingGameModel toBowlingGameModel(CreateGameDto createGameDto){
 

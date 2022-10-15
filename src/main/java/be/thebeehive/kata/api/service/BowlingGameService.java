@@ -4,18 +4,14 @@ import be.thebeehive.kata.api.dto.BowlingGameDto;
 import be.thebeehive.kata.api.dto.CreateGameDto;
 import be.thebeehive.kata.api.model.BowlingGameModel;
 import be.thebeehive.kata.api.util.BowlingGameStarterMapper;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class BowlingGameService {
 
     private BowlingGameStarterMapper bowlingGameStarterMapper;
-
-    public BowlingGameService(BowlingGameStarterMapper bowlingGameStarterMapper){
-
-        this.bowlingGameStarterMapper = bowlingGameStarterMapper;
-
-    }
 
     public BowlingGameDto createBowlingGame(CreateGameDto createGameDto){
 
