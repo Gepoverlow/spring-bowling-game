@@ -55,7 +55,7 @@ class CreateBowlingGameIT extends BaseIntegrationTest {
     @ParameterizedTest
     @NullAndEmptySource
     @ValueSource(strings = {" ", "\t", "\n"})
-    void createGameWithEmtpyNameShouldReturnBadRequestWithExpectedMessage(String name) throws Exception {
+    void createGameWithEmptyNameShouldReturnBadRequestWithExpectedMessage(String name) throws Exception {
         CreateGameDto createGameDto = new CreateGameDto(name);
 
         mockMvc.perform(
