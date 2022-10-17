@@ -4,6 +4,7 @@ import be.thebeehive.kata.api.dto.BowlingGameDto;
 import be.thebeehive.kata.api.dto.CreateGameDto;
 import be.thebeehive.kata.api.dto.RollDto;
 import be.thebeehive.kata.api.model.BowlingGameModel;
+import be.thebeehive.kata.api.model.RollModel;
 import be.thebeehive.kata.api.repository.BowlingGameRepository;
 import be.thebeehive.kata.api.util.BowlingGameStarterMapper;
 import lombok.AllArgsConstructor;
@@ -29,8 +30,12 @@ public class BowlingGameService {
 
     public BowlingGameDto performBowlingRoll(String gameId, RollDto rollDto){
 
+        RollModel rollModel = bowlingGameStarterMapper.toRollModel(rollDto);
         BowlingGameModel foundBowlingGame = bowlingGameRepository.findBowlingGameByGameId(gameId);
-        BowlingGameDto bowlingGameDto = new BowlingGameDto(foundBowlingGame.getGameId(), foundBowlingGame.getName(), rollDto.pins());
+
+        foundBowlingGame.calculateGameScore(foundBowlingGame.addRoll(rollModel));
+
+        BowlingGameDto bowlingGameDto = new BowlingGameDto(foundBowlingGame.getGameId(), foundBowlingGame.getName(), foundBowlingGame.getScore());
 
         return bowlingGameDto;
 
