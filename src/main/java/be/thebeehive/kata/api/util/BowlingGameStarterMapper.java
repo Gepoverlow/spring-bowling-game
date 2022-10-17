@@ -14,7 +14,7 @@ public class BowlingGameStarterMapper {
 
     public BowlingGameModel toBowlingGameModel(CreateGameDto createGameDto){
 
-        String gameId = gameIdGenerator.generateGameId().toString();
+        String gameId = gameIdGenerator.generateGameId();
 
         return new BowlingGameModel(gameId, createGameDto.name(), STARTING_SCORE);
 
