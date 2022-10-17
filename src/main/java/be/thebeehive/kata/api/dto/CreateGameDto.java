@@ -5,7 +5,7 @@ import javax.validation.constraints.NotBlank;
 
 public record CreateGameDto(
 
-        @NotBlank
+        @NotBlank(message = "\tName is required")
         String name
 
 ) {

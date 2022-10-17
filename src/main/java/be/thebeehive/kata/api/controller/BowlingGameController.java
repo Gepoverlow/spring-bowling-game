@@ -17,14 +17,16 @@ public class BowlingGameController {
     private final BowlingGameService bowlingGameService;
 
     @PostMapping(value = "/bowling")
-    public ResponseEntity<BowlingGameDto> createBowlingGame(@Valid @RequestBody CreateGameDto createGameDto){
+    public ResponseEntity<BowlingGameDto> createBowlingGame(@Valid @RequestBody CreateGameDto createGameDto) {
+
+        BowlingGameDto createdBowlingGame = bowlingGameService.createBowlingGame(createGameDto);
 
         return ResponseEntity.ok().body(bowlingGameService.createBowlingGame(createGameDto));
 
     }
 
     @PostMapping(value = "/bowling/{gameId}")
-    public ResponseEntity<BowlingGameDto> performBowlingRoll(@PathVariable String gameId, @Valid @RequestBody RollDto rollDto){
+    public ResponseEntity<BowlingGameDto> performBowlingRoll(@PathVariable String gameId, @Valid @RequestBody RollDto rollDto) {
 
         return ResponseEntity.ok().body(bowlingGameService.performBowlingRoll(gameId, rollDto));
 
