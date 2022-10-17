@@ -8,7 +8,7 @@ import java.util.UUID;
 public class GameIdGenerator {
 
     public String generateGameId(){
-        String uuid = "u-".concat(UUID.randomUUID().toString()) ;
+        String uuid = UUID.randomUUID().toString();
         return uuid;
     }
 
