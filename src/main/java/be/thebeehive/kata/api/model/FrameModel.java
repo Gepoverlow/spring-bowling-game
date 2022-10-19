@@ -16,16 +16,21 @@ public class FrameModel {
     private List<RollModel> extraRolls = new ArrayList<>();
     private int frameScore;
 
-    public int calculateFinalFrameValue(){
+    public boolean isFrameSpare(){
 
-        int sumOfExtraRolls = 0;
+        return this.checkForSpare();
+
+    }
+
+    private boolean checkForSpare(){
+
+            return this.initialRolls.get(0).getPins() != 10 && this.calculateInitialFrameValue() == 10;
+
+    }
+
+    private int calculateInitialFrameValue(){
+
         int sumOfInitialRolls = 0;
-
-        for(int i = 0; i < this.extraRolls.size(); i++){
-
-            sumOfExtraRolls = sumOfInitialRolls + this.extraRolls.get(i).getPins();
-
-        }
 
         for(int i = 0; i < this.initialRolls.size(); i++){
 
@@ -33,8 +38,27 @@ public class FrameModel {
 
         }
 
+        return sumOfInitialRolls;
 
-        return sumOfExtraRolls + sumOfInitialRolls;
+    }
+
+    private int calculateExtraRollsValue(){
+
+        int sumOfExtraRolls = 0;
+
+        for(int i = 0; i < this.extraRolls.size(); i++){
+
+            sumOfExtraRolls = sumOfExtraRolls + this.extraRolls.get(i).getPins();
+
+        }
+
+        return sumOfExtraRolls;
+
+    }
+
+    public int calculateFinalFrameValue(){
+
+        return this.calculateInitialFrameValue() + this.calculateExtraRollsValue();
 
     }
 
