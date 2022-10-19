@@ -20,7 +20,7 @@ public class BowlingGameService {
     public BowlingGameDto createBowlingGame(CreateGameDto createGameDto){
 
         BowlingGameModel bowlingGame = bowlingGameStarterMapper.toBowlingGameModel(createGameDto);
-        BowlingGameDto bowlingGameDto = new BowlingGameDto(bowlingGame.getGameId(), bowlingGame.getName() , bowlingGame.getScore());
+        BowlingGameDto bowlingGameDto = new BowlingGameDto(bowlingGame.getGameId(), bowlingGame.getName() , bowlingGame.getTotalGameScore());
 
         bowlingGameRepository.bowlingGames.add(bowlingGame);
 
@@ -33,9 +33,9 @@ public class BowlingGameService {
         RollModel rollModel = bowlingGameStarterMapper.toRollModel(rollDto);
         BowlingGameModel foundBowlingGame = bowlingGameRepository.findBowlingGameByGameId(gameId);
 
-        foundBowlingGame.calculateGameScore(foundBowlingGame.addRoll(rollModel));
+        foundBowlingGame.handleScoreCalculation(rollModel);
 
-        BowlingGameDto bowlingGameDto = new BowlingGameDto(foundBowlingGame.getGameId(), foundBowlingGame.getName(), foundBowlingGame.getScore());
+        BowlingGameDto bowlingGameDto = new BowlingGameDto(foundBowlingGame.getGameId(), foundBowlingGame.getName(), foundBowlingGame.getTotalGameScore());
 
         return bowlingGameDto;
 

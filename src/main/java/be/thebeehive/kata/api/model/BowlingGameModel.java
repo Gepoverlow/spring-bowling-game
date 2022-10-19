@@ -1,11 +1,8 @@
 package be.thebeehive.kata.api.model;
 
-
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,31 +11,64 @@ import java.util.List;
 public class BowlingGameModel {
     private String gameId;
     private String name;
-    private int score = 0;
-    private List<RollModel> gameRolls = new ArrayList<>();
+    private int totalGameScore = 0;
+    private List<FrameModel> gameFrames = new ArrayList<>();
+
+    private boolean hasStarted = false;
 
     public BowlingGameModel(String gameId, String name){
         this.gameId = gameId;
         this.name = name;
     }
 
-    public List<RollModel> addRoll(RollModel roll){
-         this.gameRolls.add(roll);
-         return this.gameRolls;
-    }
-
-    public void calculateGameScore(List<RollModel> allRolls){
+    public void calculateGameScore(){
 
         int sum = 0;
 
-        for(int i = 0; i < allRolls.size(); i++){
+        for(int i = 0; i < this.gameFrames.size(); i++){
 
-            sum = sum + allRolls.get(i).getPins();
+           int individualFrameScore = this.gameFrames.get(i).calculateFinalFrameValue();
+
+            sum = sum + individualFrameScore;
 
         }
 
-        this.score = sum;
+        this.totalGameScore = sum;
 
     }
+
+   public void handleScoreCalculation(RollModel roll){
+
+        if(this.gameFrames.isEmpty()) {
+
+            FrameModel firstFrame = new FrameModel();
+            firstFrame.getInitialRolls().add(roll);
+
+            this.gameFrames.add(firstFrame);
+
+
+        } else {
+
+            FrameModel lastFrame = this.gameFrames.get(this.gameFrames.size() - 1);
+
+            if(lastFrame.getInitialRolls().size() == 1) {
+
+                RollModel secondRoll = new RollModel(roll.getPins());
+                lastFrame.getInitialRolls().add(secondRoll);
+
+            } else if(lastFrame.getInitialRolls().size() == 2) {
+
+                FrameModel newFrame = new FrameModel();
+                RollModel firstRoll = new RollModel(roll.getPins());
+                newFrame.getInitialRolls().add(firstRoll);
+                this.gameFrames.add(newFrame);
+
+            }
+
+        }
+
+       this.calculateGameScore();
+
+   }
 
 }
