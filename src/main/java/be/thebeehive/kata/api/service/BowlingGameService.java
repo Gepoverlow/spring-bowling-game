@@ -22,6 +22,8 @@ public class BowlingGameService {
         BowlingGameModel bowlingGame = bowlingGameStarterMapper.toBowlingGameModel(createGameDto);
         BowlingGameDto bowlingGameDto = new BowlingGameDto(bowlingGame.getGameId(), bowlingGame.getName() , bowlingGame.getTotalGameScore());
 
+        bowlingGame.init();
+
         bowlingGameRepository.bowlingGames.add(bowlingGame);
 
         return bowlingGameDto;

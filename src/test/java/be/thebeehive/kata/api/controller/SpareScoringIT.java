@@ -33,7 +33,8 @@ class SpareScoringIT extends BaseIntegrationTest {
                 Arguments.of(new int[]{0, 10, 1}, 12),
                 Arguments.of(new int[]{0, 10, 2}, 14),
                 Arguments.of(new int[]{0, 10, 5}, 20),
-                Arguments.of(new int[]{0, 10, 1, 1}, 13)
+                Arguments.of(new int[]{0, 10, 1, 1}, 13),
+                Arguments.of(new int[]{0, 10, 5, 5, 3, 1, 6, 3, 1, 2, 4, 5, 6, 4, 8, 1, 6, 4, 1, 1}, 93)
         );
     }
 }

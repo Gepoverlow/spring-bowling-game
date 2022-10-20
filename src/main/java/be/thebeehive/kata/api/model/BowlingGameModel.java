@@ -11,19 +11,59 @@ import java.util.List;
 public class BowlingGameModel {
 
     private final int MIN_FRAME_SIZE = 1;
-    private final int MAX_FRAME_SIZE = 2;
+    private final int MAX_FRAME_SIZE = 3;
+    private final int GAME_FRAMES = 10;
 
     private String gameId;
     private String name;
     private int totalGameScore = 0;
-    private List<FrameModel> gameFrames = new ArrayList<>();
+    private List<FrameModel> gameFrames = new ArrayList<>(10);
 
     public BowlingGameModel(String gameId, String name){
         this.gameId = gameId;
         this.name = name;
     }
 
-    public void calculateGameScore(){
+    public void init(){
+
+        for(int i = 0; i < GAME_FRAMES; i++){
+
+            this.gameFrames.add(new FrameModel());
+
+        }
+
+    }
+
+    public void handleExtrasForSpareFrames(RollModel roll){
+
+        for(int i = 0 ; i < this.gameFrames.size() ; i++){
+
+            FrameModel currentFrame = this.gameFrames.get(i);
+
+            if(currentFrame.isSpare() && currentFrame.getExtraRolls().size() == 0 && currentFrame.getInitialRolls().size() == 2){
+
+                currentFrame.getExtraRolls().add(roll);
+                currentFrame.setFrameOpenForSpareRolls(false);
+
+            }
+
+        }
+
+    }
+
+    private void tagAllFrames(){
+
+        for(int i = 0 ; i < this.gameFrames.size() ; i++) {
+
+            this.gameFrames.get(i).tagFrame();
+
+        }
+
+    }
+
+    public void handleExtrasForStrikeFrames(){}
+
+    private void calculateGameScore(){
 
         int sum = 0;
 
@@ -41,43 +81,33 @@ public class BowlingGameModel {
 
    public void handleScoreCalculation(RollModel roll){
 
-        if(this.gameFrames.isEmpty()) {
+        RollModel performedRoll = new RollModel(roll.getPins());
 
-            FrameModel firstFrame = new FrameModel();
-            firstFrame.getInitialRolls().add(roll);
+        for(int i = 0 ; i < this.gameFrames.size() ; i++){
 
-            this.gameFrames.add(firstFrame);
+            if(this.gameFrames.get(i).isFrameOpenForInitialRolls()){
 
-        } else {
+                FrameModel currentFrame = this.gameFrames.get(i);
 
-            FrameModel lastFrame = this.gameFrames.get(this.gameFrames.size() - 1);
+                currentFrame.getInitialRolls().add(performedRoll);
 
-            if(lastFrame.getInitialRolls().size() == MIN_FRAME_SIZE) {
+                if(currentFrame.getInitialRolls().size() == 2 || currentFrame.isSpare() || currentFrame.isStrike()){
 
-                RollModel secondRoll = new RollModel(roll.getPins());
-                lastFrame.getInitialRolls().add(secondRoll);
-
-            } else if(lastFrame.getInitialRolls().size() == MAX_FRAME_SIZE) {
-
-                FrameModel newFrame = new FrameModel();
-                RollModel firstRoll = new RollModel(roll.getPins());
-
-                if(lastFrame.isFrameSpare()){
-
-                    RollModel extraSpareRoll = new RollModel(roll.getPins());
-                    lastFrame.getExtraRolls().add(extraSpareRoll);
+                    currentFrame.setFrameOpenForInitialRolls(false);
 
                 }
 
-                newFrame.getInitialRolls().add(firstRoll);
-                this.gameFrames.add(newFrame);
+                break;
 
             }
 
-
         }
 
+        this.handleExtrasForSpareFrames(roll);
+       // this.handleExtrasForStrikeFrames(roll);
+
        this.calculateGameScore();
+       this.tagAllFrames();
 
    }
 

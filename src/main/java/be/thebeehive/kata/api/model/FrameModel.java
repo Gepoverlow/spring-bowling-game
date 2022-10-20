@@ -11,20 +11,33 @@ import java.util.List;
 public class FrameModel {
 
     private final int MAX_PINS = 10;
-
+    private final int MAX_INITIAL_SCORE = 10;
     private List<RollModel> initialRolls = new ArrayList<>();
     private List<RollModel> extraRolls = new ArrayList<>();
-    private int frameScore;
 
-    public boolean isFrameSpare(){
+    private boolean isSpare = false;
+    private boolean isStrike = false;
+    private boolean isFrameOpenForInitialRolls = true;
+    private boolean isFrameOpenForSpareRolls = false;
+    private boolean isFrameOpenForStrikeRolls = false;
 
-        return this.checkForSpare();
+    public void tagFrame(){
 
-    }
+        if(!this.getInitialRolls().isEmpty()){
 
-    private boolean checkForSpare(){
+            if(this.getInitialRolls().get(0).getPins() == MAX_PINS && this.calculateInitialFrameValue() == MAX_INITIAL_SCORE) {
 
-            return this.initialRolls.get(0).getPins() != 10 && this.calculateInitialFrameValue() == 10;
+                this.isStrike = true;
+                this.setFrameOpenForStrikeRolls(true);
+
+            } else if(this.getInitialRolls().get(0).getPins() != MAX_PINS && this.calculateInitialFrameValue() == MAX_INITIAL_SCORE){
+
+                this.isSpare = true;
+                this.setFrameOpenForSpareRolls(true);
+
+            }
+
+        }
 
     }
 
