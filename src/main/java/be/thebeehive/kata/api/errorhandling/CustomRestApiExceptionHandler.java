@@ -1,6 +1,7 @@
 package be.thebeehive.kata.api.errorhandling;
 
 import be.thebeehive.kata.api.errorhandling.exception.BowlingGameNotFoundException;
+import be.thebeehive.kata.api.errorhandling.exception.IllegalSumOfRollsInFrameException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,6 +58,15 @@ public class CustomRestApiExceptionHandler extends ResponseEntityExceptionHandle
         final ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, ex.getMessage());
 
         return new ResponseEntity(apiError, HttpStatus.NOT_FOUND);
+
+    }
+
+    @ExceptionHandler({IllegalSumOfRollsInFrameException.class})
+    protected ResponseEntity<Object> handleIllegalRoll(IllegalSumOfRollsInFrameException ex){
+
+         final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getMessage());
+
+         return new ResponseEntity(apiError, HttpStatus.BAD_REQUEST);
 
     }
 

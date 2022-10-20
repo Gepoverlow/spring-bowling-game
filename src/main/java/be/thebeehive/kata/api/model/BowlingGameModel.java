@@ -1,5 +1,6 @@
 package be.thebeehive.kata.api.model;
 
+import be.thebeehive.kata.api.errorhandling.exception.IllegalSumOfRollsInFrameException;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -98,9 +99,21 @@ public class BowlingGameModel {
 
     }
 
-   public void handleScoreCalculation(RollModel roll){
+    private boolean checkIfFrameTotalWouldGoOverTen(FrameModel frame, RollModel roll){
 
-        RollModel performedRoll = new RollModel(roll.getPins());
+        boolean isOverTen = false;
+
+        if(!frame.getInitialRolls().isEmpty()){
+
+            isOverTen = frame.getInitialRolls().get(0).getPins() + roll.getPins() > 10;
+
+        }
+
+        return isOverTen;
+
+    }
+
+   public void handleScoreCalculation(RollModel roll){
 
         for(int i = 0 ; i < this.gameFrames.size() ; i++){
 
@@ -108,7 +121,13 @@ public class BowlingGameModel {
 
                 FrameModel currentFrame = this.gameFrames.get(i);
 
-                currentFrame.getInitialRolls().add(performedRoll);
+                if(this.checkIfFrameTotalWouldGoOverTen(currentFrame, roll)){
+
+                    throw new IllegalSumOfRollsInFrameException("The sum of the rolls in this frame is illegal, please select a lower number of pins");
+
+                }
+
+                currentFrame.getInitialRolls().add(roll);
 
                 if(currentFrame.getInitialRolls().size() == 2 || currentFrame.calculateInitialFrameValue() == 10){
 
