@@ -34,7 +34,7 @@ public class BowlingGameModel {
 
     }
 
-    public void handleExtrasForSpareFrames(RollModel roll){
+    private void handleExtrasForSpareFrames(RollModel roll){
 
         for(int i = 0 ; i < this.gameFrames.size() ; i++){
 
@@ -51,6 +51,27 @@ public class BowlingGameModel {
 
     }
 
+    private void handleExtrasForStrikeFrames(RollModel roll){
+
+        for(int i = 0 ; i < this.gameFrames.size() ; i++) {
+
+            FrameModel currentFrame = this.gameFrames.get(i);
+
+            if(currentFrame.isFrameOpenForStrikeRolls() && currentFrame.getExtraRolls().size() == 0) {
+
+                currentFrame.getExtraRolls().add(roll);
+
+            } else if (currentFrame.isFrameOpenForStrikeRolls() && currentFrame.getExtraRolls().size() == 1) {
+
+                currentFrame.getExtraRolls().add(roll);
+                currentFrame.setFrameOpenForStrikeRolls(false);
+
+            }
+
+        }
+
+    }
+
     private void tagAllFrames(){
 
         for(int i = 0 ; i < this.gameFrames.size() ; i++) {
@@ -60,8 +81,6 @@ public class BowlingGameModel {
         }
 
     }
-
-    public void handleExtrasForStrikeFrames(){}
 
     private void calculateGameScore(){
 
@@ -91,7 +110,7 @@ public class BowlingGameModel {
 
                 currentFrame.getInitialRolls().add(performedRoll);
 
-                if(currentFrame.getInitialRolls().size() == 2 || currentFrame.isSpare() || currentFrame.isStrike()){
+                if(currentFrame.getInitialRolls().size() == 2 || currentFrame.calculateInitialFrameValue() == 10){
 
                     currentFrame.setFrameOpenForInitialRolls(false);
 
@@ -104,10 +123,10 @@ public class BowlingGameModel {
         }
 
         this.handleExtrasForSpareFrames(roll);
-       // this.handleExtrasForStrikeFrames(roll);
+        this.handleExtrasForStrikeFrames(roll);
 
-       this.calculateGameScore();
-       this.tagAllFrames();
+        this.calculateGameScore();
+        this.tagAllFrames();
 
    }
 

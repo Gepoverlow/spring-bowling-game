@@ -25,12 +25,12 @@ public class FrameModel {
 
         if(!this.getInitialRolls().isEmpty()){
 
-            if(this.getInitialRolls().get(0).getPins() == MAX_PINS && this.calculateInitialFrameValue() == MAX_INITIAL_SCORE) {
+            if(this.getInitialRolls().get(0).getPins() == MAX_PINS && this.calculateInitialFrameValue() == MAX_INITIAL_SCORE && this.extraRolls.size() < 2) {
 
                 this.isStrike = true;
                 this.setFrameOpenForStrikeRolls(true);
 
-            } else if(this.getInitialRolls().get(0).getPins() != MAX_PINS && this.calculateInitialFrameValue() == MAX_INITIAL_SCORE){
+            } else if(this.getInitialRolls().get(0).getPins() != MAX_PINS && this.calculateInitialFrameValue() == MAX_INITIAL_SCORE && this.extraRolls.size() < 1){
 
                 this.isSpare = true;
                 this.setFrameOpenForSpareRolls(true);
@@ -41,7 +41,7 @@ public class FrameModel {
 
     }
 
-    private int calculateInitialFrameValue(){
+    public int calculateInitialFrameValue(){
 
         int sumOfInitialRolls = 0;
 
