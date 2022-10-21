@@ -3,6 +3,7 @@ package be.thebeehive.kata.api.service;
 import be.thebeehive.kata.api.dto.BowlingGameDto;
 import be.thebeehive.kata.api.dto.CreateGameDto;
 import be.thebeehive.kata.api.dto.RollDto;
+import be.thebeehive.kata.api.errorhandling.exception.GameOverException;
 import be.thebeehive.kata.api.model.BowlingGameModel;
 import be.thebeehive.kata.api.model.RollModel;
 import be.thebeehive.kata.api.repository.BowlingGameRepository;
@@ -35,7 +36,7 @@ public class BowlingGameService {
         RollModel rollModel = bowlingGameStarterMapper.toRollModel(rollDto);
         BowlingGameModel foundBowlingGame = bowlingGameRepository.findBowlingGameByGameId(gameId);
 
-        foundBowlingGame.handleScoreCalculation(rollModel);
+        if(!foundBowlingGame.isGameOver()){ foundBowlingGame.handleScoreCalculation(rollModel); } else { throw new GameOverException("Game over. Final score is " + foundBowlingGame.getTotalGameScore()); }
 
         BowlingGameDto bowlingGameDto = new BowlingGameDto(foundBowlingGame.getGameId(), foundBowlingGame.getName(), foundBowlingGame.getTotalGameScore());
 

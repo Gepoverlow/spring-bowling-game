@@ -19,8 +19,6 @@ public class BowlingGameController {
     @PostMapping(value = "/bowling")
     public ResponseEntity<BowlingGameDto> createBowlingGame(@Valid @RequestBody CreateGameDto createGameDto) {
 
-        BowlingGameDto createdBowlingGame = bowlingGameService.createBowlingGame(createGameDto);
-
         return ResponseEntity.ok().body(bowlingGameService.createBowlingGame(createGameDto));
 
     }

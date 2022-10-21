@@ -29,7 +29,11 @@ class StrikeScoringIT extends BaseIntegrationTest {
         return Stream.of(
                 Arguments.of(new int[]{10, 3, 5}, 26),
                 Arguments.of(new int[]{10, 10, 3, 6}, 51),
-                Arguments.of(new int[]{10, 10,10, 10,10, 10,10, 10,10, 10,10, 10}, 300)
+                Arguments.of(new int[]{10, 10,10, 10,10, 10,10, 10,10, 10,10, 10}, 300),
+                Arguments.of(new int[]{1, 9, 10, 5, 2, 6, 4, 9, 0, 10, 10, 7, 2, 6, 4, 9, 1, 10}, 166),
+                Arguments.of(new int[]{10, 10, 10, 10, 10, 10, 6, 4, 3, 1, 8, 1, 10, 10, 2}, 214),
+                Arguments.of(new int[]{10, 10, 10, 5, 5, 6, 4, 10, 10, 1, 1, 9, 1, 8, 1}, 173)
+
         );
     }
 }

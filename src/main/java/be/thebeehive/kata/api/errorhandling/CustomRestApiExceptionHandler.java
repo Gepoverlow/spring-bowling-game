@@ -1,6 +1,7 @@
 package be.thebeehive.kata.api.errorhandling;
 
 import be.thebeehive.kata.api.errorhandling.exception.BowlingGameNotFoundException;
+import be.thebeehive.kata.api.errorhandling.exception.GameOverException;
 import be.thebeehive.kata.api.errorhandling.exception.IllegalSumOfRollsInFrameException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -70,8 +71,13 @@ public class CustomRestApiExceptionHandler extends ResponseEntityExceptionHandle
 
     }
 
+    @ExceptionHandler({GameOverException.class})
+    protected ResponseEntity<Object> handleGameOver(GameOverException ex){
 
+        final ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, ex.getMessage());
 
+        return new ResponseEntity(apiError, HttpStatus.BAD_REQUEST);
 
+    }
 
 }

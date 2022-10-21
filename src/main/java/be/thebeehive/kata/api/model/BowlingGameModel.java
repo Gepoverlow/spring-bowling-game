@@ -11,15 +11,16 @@ import java.util.List;
 @Setter
 public class BowlingGameModel {
 
-    private final int MIN_FRAME_SIZE = 1;
     private final int MAX_NOT_LAST_FRAME_SIZE = 2;
     private final int MAX_NOT_LAST_FRAME_SCORE = 10;
+    private final int MAX_LAST_FRAME_SCORE = 30;
     private final int GAME_FRAMES = 10;
-
     private String gameId;
     private String name;
     private int totalGameScore = 0;
     private List<FrameModel> gameFrames = new ArrayList<>(10);
+
+    private boolean isGameOver = false;
 
     public BowlingGameModel(String gameId, String name){
         this.gameId = gameId;
@@ -35,6 +36,7 @@ public class BowlingGameModel {
         }
 
     }
+
 
     private void handleExtrasForSpareFrames(RollModel roll){
 
@@ -100,17 +102,29 @@ public class BowlingGameModel {
 
     }
 
-    private boolean checkIfFrameTotalWouldGoOverTen(FrameModel frame, RollModel roll){
+    private boolean checkIfFrameTotalWouldGoOverMaximum(FrameModel frame, RollModel roll){
 
-        boolean isOverTen = false;
+        boolean isOverMax = false;
 
         if(!frame.getInitialRolls().isEmpty()){
 
-            isOverTen = frame.getInitialRolls().get(0).getPins() + roll.getPins() > MAX_NOT_LAST_FRAME_SCORE;
+            isOverMax = frame.calculateInitialFrameValue() + roll.getPins() > MAX_NOT_LAST_FRAME_SCORE;
 
         }
 
-        return isOverTen;
+        return isOverMax;
+
+    }
+
+    private void checkIfGameIsOver(){
+
+        FrameModel lastGameFrame = this.gameFrames.get(this.gameFrames.size() - 1);
+
+        if((lastGameFrame.isSpare() && !lastGameFrame.isFrameOpenForSpareRolls()) || (lastGameFrame.isStrike() && !lastGameFrame.isFrameOpenForStrikeRolls()) || (!lastGameFrame.isSpare() && !lastGameFrame.isStrike() && !lastGameFrame.isFrameOpenForInitialRolls() ) ){
+
+            this.setGameOver(true);
+
+        }
 
     }
 
@@ -122,7 +136,7 @@ public class BowlingGameModel {
 
                 FrameModel currentFrame = this.gameFrames.get(i);
 
-                if(this.checkIfFrameTotalWouldGoOverTen(currentFrame, roll)){
+                if(this.checkIfFrameTotalWouldGoOverMaximum(currentFrame, roll)){
 
                     throw new IllegalSumOfRollsInFrameException("The sum of the rolls in this frame is illegal, please select a lower number of pins");
 
@@ -147,6 +161,8 @@ public class BowlingGameModel {
 
         this.calculateGameScore();
         this.tagAllFrames();
+
+        this.checkIfGameIsOver();
 
    }
 
