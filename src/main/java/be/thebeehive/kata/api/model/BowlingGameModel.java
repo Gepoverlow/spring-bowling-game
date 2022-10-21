@@ -12,7 +12,8 @@ import java.util.List;
 public class BowlingGameModel {
 
     private final int MIN_FRAME_SIZE = 1;
-    private final int MAX_FRAME_SIZE = 3;
+    private final int MAX_NOT_LAST_FRAME_SIZE = 2;
+    private final int MAX_NOT_LAST_FRAME_SCORE = 10;
     private final int GAME_FRAMES = 10;
 
     private String gameId;
@@ -41,7 +42,7 @@ public class BowlingGameModel {
 
             FrameModel currentFrame = this.gameFrames.get(i);
 
-            if(currentFrame.isSpare() && currentFrame.getExtraRolls().size() == 0 && currentFrame.getInitialRolls().size() == 2){
+            if(currentFrame.isSpare() && currentFrame.getExtraRolls().isEmpty() && currentFrame.getInitialRolls().size() == MAX_NOT_LAST_FRAME_SIZE){
 
                 currentFrame.getExtraRolls().add(roll);
                 currentFrame.setFrameOpenForSpareRolls(false);
@@ -58,7 +59,7 @@ public class BowlingGameModel {
 
             FrameModel currentFrame = this.gameFrames.get(i);
 
-            if(currentFrame.isFrameOpenForStrikeRolls() && currentFrame.getExtraRolls().size() == 0) {
+            if(currentFrame.isFrameOpenForStrikeRolls() && currentFrame.getExtraRolls().isEmpty()) {
 
                 currentFrame.getExtraRolls().add(roll);
 
@@ -105,7 +106,7 @@ public class BowlingGameModel {
 
         if(!frame.getInitialRolls().isEmpty()){
 
-            isOverTen = frame.getInitialRolls().get(0).getPins() + roll.getPins() > 10;
+            isOverTen = frame.getInitialRolls().get(0).getPins() + roll.getPins() > MAX_NOT_LAST_FRAME_SCORE;
 
         }
 
@@ -129,7 +130,7 @@ public class BowlingGameModel {
 
                 currentFrame.getInitialRolls().add(roll);
 
-                if(currentFrame.getInitialRolls().size() == 2 || currentFrame.calculateInitialFrameValue() == 10){
+                if(currentFrame.getInitialRolls().size() == MAX_NOT_LAST_FRAME_SIZE || currentFrame.calculateInitialFrameValue() == MAX_NOT_LAST_FRAME_SCORE){
 
                     currentFrame.setFrameOpenForInitialRolls(false);
 
