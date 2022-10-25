@@ -2,6 +2,7 @@ package be.thebeehive.kata.api.model;
 
 import be.thebeehive.kata.api.dto.RollDto;
 import be.thebeehive.kata.api.errorhandling.exception.IllegalSumOfRollsInFrameException;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +11,6 @@ import java.util.List;
 
 @Getter
 @Setter
-
 //TODO: PUBLIC methods need to go on top
 //TODO: remove 'this' keyword where not needed
 public class BowlingGameModel {
@@ -22,16 +22,17 @@ public class BowlingGameModel {
     private final int GAME_FRAMES = 10;
     private String gameId;
     private String name;
-    private int totalGameScore = 0;
+    private int score;
     private List<FrameModel> gameFrames = new ArrayList<>(10);
 
     private boolean isGameOver = false;
 
     //TODO: instead of having this constructor we could perhaps use a builder annotation to handle it
-    public BowlingGameModel(String gameId, String name){
-        this.gameId = gameId;
-        this.name = name;
-    }
+
+    // public BowlingGameModel(String gameId, String name){
+      // this.gameId = gameId;
+      // this.name = name;
+     // }
 
     //TODO: this needs to GO!
     public void init(){
@@ -108,7 +109,7 @@ public class BowlingGameModel {
 
         }
 
-        this.totalGameScore = sum;
+        this.score = sum;
 
     }
 
