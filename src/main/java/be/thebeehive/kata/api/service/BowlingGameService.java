@@ -15,32 +15,34 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class BowlingGameService {
 
-    private BowlingGameStarterMapper bowlingGameStarterMapper;
-    private BowlingGameRepository bowlingGameRepository;
+    private final BowlingGameStarterMapper bowlingGameStarterMapper;
+    private final BowlingGameRepository bowlingGameRepository;
 
     public BowlingGameDto createBowlingGame(CreateGameDto createGameDto){
 
         BowlingGameModel bowlingGame = bowlingGameStarterMapper.toBowlingGameModel(createGameDto);
-        BowlingGameDto bowlingGameDto = new BowlingGameDto(bowlingGame.getGameId(), bowlingGame.getName() , bowlingGame.getTotalGameScore());
 
+        //TODO: this needs to go
         bowlingGame.init();
 
+        //TODO: this is not good practice : maybe create a public method that handles this?
         bowlingGameRepository.bowlingGames.add(bowlingGame);
 
-        return bowlingGameDto;
+        return new BowlingGameDto(bowlingGame.getGameId(), bowlingGame.getName() , bowlingGame.getTotalGameScore());
 
     }
 
     public BowlingGameDto performBowlingRoll(String gameId, RollDto rollDto){
 
-        RollModel rollModel = bowlingGameStarterMapper.toRollModel(rollDto);
         BowlingGameModel foundBowlingGame = bowlingGameRepository.findBowlingGameByGameId(gameId);
 
-        if(!foundBowlingGame.isGameOver()){ foundBowlingGame.handleScoreCalculation(rollModel); } else { throw new GameOverException("Game over. Final score is " + foundBowlingGame.getTotalGameScore()); }
+        if(foundBowlingGame.isGameOver()){
+            throw new GameOverException("Game over. Final score is " + foundBowlingGame.getTotalGameScore());
+        }
 
-        BowlingGameDto bowlingGameDto = new BowlingGameDto(foundBowlingGame.getGameId(), foundBowlingGame.getName(), foundBowlingGame.getTotalGameScore());
+        foundBowlingGame.handleScoreCalculation(rollDto);
 
-        return bowlingGameDto;
+       return new BowlingGameDto(foundBowlingGame.getGameId(), foundBowlingGame.getName(), foundBowlingGame.getTotalGameScore());
 
     }
 

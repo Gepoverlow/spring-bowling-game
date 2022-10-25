@@ -5,7 +5,7 @@ import be.thebeehive.kata.api.dto.CreateGameDto;
 import be.thebeehive.kata.api.dto.RollDto;
 import be.thebeehive.kata.api.service.BowlingGameService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -13,21 +13,26 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/")
 @AllArgsConstructor
+@Slf4j
 public class BowlingGameController {
     private final BowlingGameService bowlingGameService;
 
     @PostMapping(value = "/bowling")
-    public ResponseEntity<BowlingGameDto> createBowlingGame(@Valid @RequestBody CreateGameDto createGameDto) {
+    public BowlingGameDto createBowlingGame(@Valid @RequestBody CreateGameDto createGameDto) {
 
-        return ResponseEntity.ok().body(bowlingGameService.createBowlingGame(createGameDto));
+        log.info("Creating new game with name {}", createGameDto.name());
+        return bowlingGameService.createBowlingGame(createGameDto);
 
     }
 
     @PostMapping(value = "/bowling/{gameId}")
-    public ResponseEntity<BowlingGameDto> performBowlingRoll(@PathVariable String gameId, @Valid @RequestBody RollDto rollDto) {
+    public BowlingGameDto performBowlingRoll(@PathVariable String gameId, @Valid @RequestBody RollDto rollDto) {
 
-        return ResponseEntity.ok().body(bowlingGameService.performBowlingRoll(gameId, rollDto));
+        log.info("Performing new roll with {} pins", rollDto.pins());
+        return bowlingGameService.performBowlingRoll(gameId, rollDto);
 
     }
+
+    //TODO: add endpoint to update the name of a game
 
 }

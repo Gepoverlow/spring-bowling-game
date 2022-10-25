@@ -1,5 +1,6 @@
 package be.thebeehive.kata.api.model;
 
+import be.thebeehive.kata.api.dto.RollDto;
 import be.thebeehive.kata.api.errorhandling.exception.IllegalSumOfRollsInFrameException;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,8 +10,12 @@ import java.util.List;
 
 @Getter
 @Setter
+
+//TODO: PUBLIC methods need to go on top
+//TODO: remove 'this' keyword where not needed
 public class BowlingGameModel {
 
+    //TODO: review these variable naming and utility
     private final int MAX_NOT_LAST_FRAME_SIZE = 2;
     private final int MAX_NOT_LAST_FRAME_SCORE = 10;
     private final int MAX_LAST_FRAME_SCORE = 30;
@@ -22,11 +27,13 @@ public class BowlingGameModel {
 
     private boolean isGameOver = false;
 
+    //TODO: instead of having this constructor we could perhaps use a builder annotation to handle it
     public BowlingGameModel(String gameId, String name){
         this.gameId = gameId;
         this.name = name;
     }
 
+    //TODO: this needs to GO!
     public void init(){
 
         for(int i = 0; i < GAME_FRAMES; i++){
@@ -37,8 +44,8 @@ public class BowlingGameModel {
 
     }
 
-
-    private void handleExtrasForSpareFrames(RollModel roll){
+    //TODO: 3 things : refactor for loop, conditionals are too messy and encapsulation (FrameModel) is being broken
+    private void handleExtrasForSpareFrames(RollDto roll){
 
         for(int i = 0 ; i < this.gameFrames.size() ; i++){
 
@@ -55,7 +62,8 @@ public class BowlingGameModel {
 
     }
 
-    private void handleExtrasForStrikeFrames(RollModel roll){
+    //TODO: 3 things : refactor for loop, conditionals are too messy and encapsulation (FrameModel) is being broken
+    private void handleExtrasForStrikeFrames(RollDto roll){
 
         for(int i = 0 ; i < this.gameFrames.size() ; i++) {
 
@@ -76,6 +84,7 @@ public class BowlingGameModel {
 
     }
 
+    //TODO: method naming -> is this name really describing what it does? Also Update loop
     private void tagAllFrames(){
 
         for(int i = 0 ; i < this.gameFrames.size() ; i++) {
@@ -86,6 +95,7 @@ public class BowlingGameModel {
 
     }
 
+    //TODO: Refactor loop
     private void calculateGameScore(){
 
         int sum = 0;
@@ -102,13 +112,14 @@ public class BowlingGameModel {
 
     }
 
-    private boolean checkIfFrameTotalWouldGoOverMaximum(FrameModel frame, RollModel roll){
+    //TODO: refactor loop
+    private boolean checkIfFrameTotalWouldGoOverMaximum(FrameModel frame, RollDto roll){
 
         boolean isOverMax = false;
 
         if(!frame.getInitialRolls().isEmpty()){
 
-            isOverMax = frame.calculateInitialFrameValue() + roll.getPins() > MAX_NOT_LAST_FRAME_SCORE;
+            isOverMax = frame.calculateInitialFrameValue() + roll.pins() > MAX_NOT_LAST_FRAME_SCORE;
 
         }
 
@@ -120,6 +131,7 @@ public class BowlingGameModel {
 
         FrameModel lastGameFrame = this.gameFrames.get(this.gameFrames.size() - 1);
 
+        //TODO: this conditional statement is WAY to big and unreadable: maybe we can handle this on a separate private method?
         if((lastGameFrame.isSpare() && !lastGameFrame.isFrameOpenForSpareRolls()) || (lastGameFrame.isStrike() && !lastGameFrame.isFrameOpenForStrikeRolls()) || (!lastGameFrame.isSpare() && !lastGameFrame.isStrike() && !lastGameFrame.isFrameOpenForInitialRolls() ) ){
 
             this.setGameOver(true);
@@ -128,7 +140,8 @@ public class BowlingGameModel {
 
     }
 
-   public void handleScoreCalculation(RollModel roll){
+    //TODO: this method needs an overhaul: looping this many times is not performant. Loops, statements and the likes need to be cleaner
+   public void handleScoreCalculation(RollDto roll){
 
         for(int i = 0 ; i < this.gameFrames.size() ; i++){
 
@@ -150,12 +163,14 @@ public class BowlingGameModel {
 
                 }
 
+                //TODO: This looks very ugly
                 break;
 
             }
 
         }
 
+        //TODO: this looks super ugly
         this.handleExtrasForSpareFrames(roll);
         this.handleExtrasForStrikeFrames(roll);
 
