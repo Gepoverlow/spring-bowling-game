@@ -11,77 +11,77 @@ import java.util.List;
 @Setter
 public class FrameModel {
 
-    private final int MAX_PINS = 10;
-    private final int MAX_INITIAL_SCORE = 10;
-    //TODO: maybe these two lists could become a single one?
-    private List<RollDto> initialRolls = new ArrayList<>();
-    private List<RollDto> extraRolls = new ArrayList<>();
+    private final int STRIKE_FRAME_SIZE = 1;
+
+    private final int SPARE_FRAME_SIZE = 2;
+    private final int PIN_AMOUNT = 10;
+
+
+
+    private List<RollDto> frameRolls = new ArrayList<>();
 
     private boolean isSpare = false;
+
     private boolean isStrike = false;
 
-    //TODO this boolean could just become isFrameOpenToAnyRoll to get initial and extra rolls on a single place and check
-    private boolean isFrameOpenForInitialRolls = true;
+    private boolean isFrameOpenToAnyRoll = true;
 
-    //TODO: are these two booleans really needed if we already tag the frame with isSpare or isStrike?
-    private boolean isFrameOpenForSpareRolls = false;
-    private boolean isFrameOpenForStrikeRolls = false;
+    public int calculateFrameRollsValue(){
 
-    //TODO: this method needs a rework for: nested, long and ugly conditionals
-    public void tagFrame(){
+        int sumOfAllFrameRolls = 0;
 
-        if(!this.getInitialRolls().isEmpty()){
+        for(RollDto roll : frameRolls){
 
-            if(this.getInitialRolls().get(0).pins() == MAX_PINS && this.calculateInitialFrameValue() == MAX_INITIAL_SCORE && this.extraRolls.size() < 2) {
-
-                this.isStrike = true;
-                this.setFrameOpenForStrikeRolls(true);
-
-            } else if(this.getInitialRolls().get(0).pins() != MAX_PINS && this.calculateInitialFrameValue() == MAX_INITIAL_SCORE && this.extraRolls.size() < 1){
-
-                this.isSpare = true;
-                this.setFrameOpenForSpareRolls(true);
-
-            }
+            sumOfAllFrameRolls = sumOfAllFrameRolls + roll.pins();
 
         }
 
+        return sumOfAllFrameRolls;
+
     }
 
-    //TODO: rework for loop for a more modern approach
-    public int calculateInitialFrameValue(){
+    public void handleAddingNewRoll(RollDto newRoll){
 
-        int sumOfInitialRolls = 0;
+        frameRolls.add(newRoll);
+        updateFrameTags();
 
-        for(int i = 0; i < this.initialRolls.size(); i++){
+    }
 
-            sumOfInitialRolls = sumOfInitialRolls + this.initialRolls.get(i).pins();
+    public void updateFrameTags(){
+
+        int currentFrameScore = calculateFrameRollsValue();
+
+        if(frameRolls.size() == STRIKE_FRAME_SIZE
+            && currentFrameScore == PIN_AMOUNT){
+
+            isStrike = true;
+
+        } else if (frameRolls.size() == SPARE_FRAME_SIZE
+                    && currentFrameScore == PIN_AMOUNT){
+
+            isSpare = true;
 
         }
 
-        return sumOfInitialRolls;
+        checkIfFrameIsOpenForRolls(currentFrameScore);
 
     }
 
-    //TODO: If I can manage to merge the initial and extra rolls on a single list this will not be needed
-    private int calculateExtraRollsValue(){
+    public void checkIfFrameIsOpenForRolls(int currentScore){
 
-        int sumOfExtraRolls = 0;
+        if(frameRolls.size() == 3 && isStrike){
 
-        for(int i = 0; i < this.extraRolls.size(); i++){
+            isFrameOpenToAnyRoll = false;
 
-            sumOfExtraRolls = sumOfExtraRolls + this.extraRolls.get(i).pins();
+        } else if(frameRolls.size() == 3 && isSpare){
+
+            isFrameOpenToAnyRoll = false;
+
+        } else if(frameRolls.size() == 2 && currentScore != PIN_AMOUNT && !isStrike && !isSpare){
+
+            isFrameOpenToAnyRoll = false;
 
         }
-
-        return sumOfExtraRolls;
-
-    }
-
-    //TODO: If I can manage to merge the initial and extra rolls on a single list this will not be needed
-    public int calculateFinalFrameValue(){
-
-        return this.calculateInitialFrameValue() + this.calculateExtraRollsValue();
 
     }
 

@@ -17,11 +17,11 @@ public class BowlingGameModel {
     private final int MAX_NOT_LAST_FRAME_SIZE = 2;
     private final int MAX_NOT_LAST_FRAME_SCORE = 10;
     private final int MAX_LAST_FRAME_SCORE = 30;
-    private final int GAME_FRAMES = 10;
+    private final int MAX_GAME_FRAMES = 10;
     private String gameId;
     private String name;
     private int score;
-    private List<FrameModel> gameFrames = new ArrayList<>(10);
+    private List<FrameModel> gameFrames = new ArrayList<>();
 
     private boolean isGameOver = false;
 
@@ -32,76 +32,54 @@ public class BowlingGameModel {
       // this.name = name;
      // }
 
-    //TODO: this needs to GO!
-    public void init(){
+    public void handleScoreCalculation(RollDto roll){
 
-        for(int i = 0; i < GAME_FRAMES; i++){
+        RollDto newRoll = new RollDto(roll.pins());
 
-            gameFrames.add(new FrameModel());
+        if(gameFrames.isEmpty()){
+
+            FrameModel initialFrame = new FrameModel();
+            gameFrames.add(initialFrame);
 
         }
 
-    }
+        FrameModel lastFrame = gameFrames.get(gameFrames.size() - 1);
 
-    //TODO: 3 things : refactor for loop, conditionals are too messy and encapsulation (FrameModel) is being broken
-    private void handleExtrasForSpareFrames(RollDto roll){
+        if(lastFrame.isSpare()
+                || lastFrame.isStrike()
+                || !lastFrame.isFrameOpenToAnyRoll() ) {
 
-        for(int i = 0 ; i < gameFrames.size() ; i++){
+            if(gameFrames.size() <= 9) {
 
-            FrameModel currentFrame = gameFrames.get(i);
-
-            if(currentFrame.isSpare() && currentFrame.getExtraRolls().isEmpty() && currentFrame.getInitialRolls().size() == MAX_NOT_LAST_FRAME_SIZE){
-
-                currentFrame.getExtraRolls().add(roll);
-                currentFrame.setFrameOpenForSpareRolls(false);
+                FrameModel newFrame = new FrameModel();
+                gameFrames.add(newFrame);
 
             }
 
         }
 
-    }
+        gameFrames.forEach(frame -> {
 
-    //TODO: 3 things : refactor for loop, conditionals are too messy and encapsulation (FrameModel) is being broken
-    private void handleExtrasForStrikeFrames(RollDto roll){
+            if(frame.isFrameOpenToAnyRoll()){
 
-        for(int i = 0 ; i < gameFrames.size() ; i++) {
-
-            FrameModel currentFrame = gameFrames.get(i);
-
-            if(currentFrame.isFrameOpenForStrikeRolls() && currentFrame.getExtraRolls().isEmpty()) {
-
-                currentFrame.getExtraRolls().add(roll);
-
-            } else if (currentFrame.isFrameOpenForStrikeRolls() && currentFrame.getExtraRolls().size() == 1) {
-
-                currentFrame.getExtraRolls().add(roll);
-                currentFrame.setFrameOpenForStrikeRolls(false);
+                frame.handleAddingNewRoll(newRoll);
 
             }
 
-        }
+        });
+
+        calculateGameScore();
+        checkIfGameIsOver();
 
     }
 
-    //TODO: method naming -> is this name really describing what it does? Also Update loop
-    private void tagAllFrames(){
-
-        for(int i = 0 ; i < gameFrames.size() ; i++) {
-
-            gameFrames.get(i).tagFrame();
-
-        }
-
-    }
-
-    //TODO: Refactor loop
     private void calculateGameScore(){
 
         int sum = 0;
 
-        for(int i = 0; i < gameFrames.size(); i++){
+        for(FrameModel frame : gameFrames){
 
-           int individualFrameScore = gameFrames.get(i).calculateFinalFrameValue();
+           int individualFrameScore = frame.calculateFrameRollsValue();
 
             sum = sum + individualFrameScore;
 
@@ -111,73 +89,20 @@ public class BowlingGameModel {
 
     }
 
-    //TODO: refactor loop
-    private boolean checkIfFrameTotalWouldGoOverMaximum(FrameModel frame, RollDto roll){
-
-        boolean isOverMax = false;
-
-        if(!frame.getInitialRolls().isEmpty()){
-
-            isOverMax = frame.calculateInitialFrameValue() + roll.pins() > MAX_NOT_LAST_FRAME_SCORE;
-
-        }
-
-        return isOverMax;
-
-    }
-
     private void checkIfGameIsOver(){
 
-        FrameModel lastGameFrame = gameFrames.get(gameFrames.size() - 1);
+        if(gameFrames.size() == MAX_GAME_FRAMES){
 
-        //TODO: this conditional statement is WAY to big and unreadable: maybe we can handle this on a separate private method?
-        if((lastGameFrame.isSpare() && !lastGameFrame.isFrameOpenForSpareRolls()) || (lastGameFrame.isStrike() && !lastGameFrame.isFrameOpenForStrikeRolls()) || (!lastGameFrame.isSpare() && !lastGameFrame.isStrike() && !lastGameFrame.isFrameOpenForInitialRolls() ) ){
+            FrameModel lastFrame = gameFrames.get(gameFrames.size() - 1);
 
-            setGameOver(true);
+            if(!lastFrame.isFrameOpenToAnyRoll()){
 
-        }
-
-    }
-
-    //TODO: this method needs an overhaul: looping this many times is not performant. Loops, statements and the likes need to be cleaner
-   public void handleScoreCalculation(RollDto roll){
-
-        for(int i = 0 ; i < gameFrames.size() ; i++){
-
-            if(gameFrames.get(i).isFrameOpenForInitialRolls()){
-
-                FrameModel currentFrame = gameFrames.get(i);
-
-                if(checkIfFrameTotalWouldGoOverMaximum(currentFrame, roll)){
-
-                    throw new IllegalSumOfRollsInFrameException("The sum of the rolls in this frame is illegal, please select a lower number of pins");
-
-                }
-
-                currentFrame.getInitialRolls().add(roll);
-
-                if(currentFrame.getInitialRolls().size() == MAX_NOT_LAST_FRAME_SIZE || currentFrame.calculateInitialFrameValue() == MAX_NOT_LAST_FRAME_SCORE){
-
-                    currentFrame.setFrameOpenForInitialRolls(false);
-
-                }
-
-                //TODO: This looks very ugly
-                break;
+                isGameOver = true;
 
             }
 
         }
 
-        //TODO: this looks super ugly
-        handleExtrasForSpareFrames(roll);
-        handleExtrasForStrikeFrames(roll);
-
-        calculateGameScore();
-        tagAllFrames();
-
-        checkIfGameIsOver();
-
-   }
+    }
 
 }
