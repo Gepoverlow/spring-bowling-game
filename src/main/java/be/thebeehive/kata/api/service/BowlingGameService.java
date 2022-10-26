@@ -25,8 +25,7 @@ public class BowlingGameService {
        // TODO: this needs to go
         bowlingGame.init();
 
-       // TODO: this is not good practice : maybe create a public method that handles this?
-        bowlingGameRepository.bowlingGames.add(bowlingGame);
+        bowlingGameRepository.addNewBowlingGame(bowlingGame.getGameId(), bowlingGame);
 
         return new BowlingGameDto(bowlingGame.getGameId(), bowlingGame.getName() , bowlingGame.getScore());
 
@@ -37,7 +36,9 @@ public class BowlingGameService {
         BowlingGameModel foundBowlingGame = bowlingGameRepository.findBowlingGameByGameId(gameId);
 
         if(foundBowlingGame.isGameOver()){
+
             throw new GameOverException("Game over. Final score is " + foundBowlingGame.getScore());
+
         }
 
         foundBowlingGame.handleScoreCalculation(rollDto);

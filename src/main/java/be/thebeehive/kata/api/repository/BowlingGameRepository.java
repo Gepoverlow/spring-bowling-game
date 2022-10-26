@@ -4,19 +4,29 @@ import be.thebeehive.kata.api.errorhandling.exception.BowlingGameNotFoundExcepti
 import be.thebeehive.kata.api.model.BowlingGameModel;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Repository
 public class BowlingGameRepository {
 
-   //TODO: Change this into a Map
-   public List<BowlingGameModel> bowlingGames = new ArrayList<>();
+   public Map<String, BowlingGameModel> bowlingGames = new HashMap();
 
-   //TODO: Refactor this method to be more performant with a Map
    public BowlingGameModel findBowlingGameByGameId(String gameId){
 
-     return bowlingGames.stream().filter(game -> gameId.equals(game.getGameId())).findFirst().orElseThrow(()->new BowlingGameNotFoundException("Game with id " + gameId + " not found"));
+      if(bowlingGames.get(gameId) == null) {
+
+         throw new BowlingGameNotFoundException("Game with id " + gameId + " not found");
+
+      }
+
+      return bowlingGames.get(gameId);
+
+   }
+
+   public void addNewBowlingGame(String gameId, BowlingGameModel newBowlingGame){
+
+      bowlingGames.put(gameId, newBowlingGame);
 
    }
 
