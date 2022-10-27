@@ -13,16 +13,11 @@ import java.util.List;
 public class FrameModel {
 
     private final int STRIKE_FRAME_SIZE = 1;
-
     private final int SPARE_FRAME_SIZE = 2;
     private final int PIN_AMOUNT = 10;
-
     private List<RollDto> frameRolls = new ArrayList<>();
-
     private boolean isSpare = false;
-
     private boolean isStrike = false;
-
     private boolean isFrameOpenToAnyRoll = true;
 
     public int calculateFrameRollsValue(){
@@ -52,7 +47,7 @@ public class FrameModel {
 
     }
 
-    public void updateFrameTags(){
+    private void updateFrameTags(){
 
         int currentFrameScore = calculateFrameRollsValue();
 
@@ -72,7 +67,7 @@ public class FrameModel {
 
     }
 
-    public void checkIfFrameIsOpenForRolls(int currentScore){
+    private void checkIfFrameIsOpenForRolls(int currentScore){
 
         if(frameRolls.size() == 3
                 && (isStrike || isSpare)){
@@ -90,7 +85,7 @@ public class FrameModel {
 
     }
 
-    public boolean isIllegalThrow(RollDto roll){
+    private boolean isIllegalThrow(RollDto roll){
 
         return !frameRolls.isEmpty()
                 && !isStrike
@@ -99,7 +94,7 @@ public class FrameModel {
 
     }
 
-    public int calculateRemainingPins(){
+    private int calculateRemainingPins(){
 
         return PIN_AMOUNT - frameRolls.get(0).pins();
 

@@ -1,7 +1,6 @@
 package be.thebeehive.kata.api.model;
 
 import be.thebeehive.kata.api.dto.RollDto;
-import be.thebeehive.kata.api.errorhandling.exception.IllegalSumOfRollsInFrameException;
 import lombok.Getter;
 import lombok.Setter;
 
