@@ -13,16 +13,11 @@ import java.util.List;
 //TODO: PUBLIC methods need to go on top
 public class BowlingGameModel {
 
-    //TODO: review these variable naming and utility
-    private final int MAX_NOT_LAST_FRAME_SIZE = 2;
-    private final int MAX_NOT_LAST_FRAME_SCORE = 10;
-    private final int MAX_LAST_FRAME_SCORE = 30;
     private final int MAX_GAME_FRAMES = 10;
     private String gameId;
     private String name;
     private int score;
     private List<FrameModel> gameFrames = new ArrayList<>();
-
     private boolean isGameOver = false;
 
     //TODO: instead of having this constructor we could perhaps use a builder annotation to handle it
@@ -36,38 +31,23 @@ public class BowlingGameModel {
 
         RollDto newRoll = new RollDto(roll.pins());
 
-        if(gameFrames.isEmpty()){
+        if(gameHasNoFramesYet()){
 
             FrameModel initialFrame = new FrameModel();
-            gameFrames.add(initialFrame);
+            addFrameToGameFrames(initialFrame);
 
         }
 
-        FrameModel lastFrame = gameFrames.get(gameFrames.size() - 1);
+        FrameModel lastFrame = getLastGameFrame();
 
-        if(lastFrame.isSpare()
-                || lastFrame.isStrike()
-                || !lastFrame.isFrameOpenToAnyRoll() ) {
+        if(gameIsOpenForAnotherFrame(lastFrame)) {
 
-            if(gameFrames.size() <= 9) {
-
-                FrameModel newFrame = new FrameModel();
-                gameFrames.add(newFrame);
-
-            }
+            FrameModel newFrame = new FrameModel();
+            addFrameToGameFrames(newFrame);
 
         }
 
-        gameFrames.forEach(frame -> {
-
-            if(frame.isFrameOpenToAnyRoll()){
-
-                frame.handleAddingNewRoll(newRoll);
-
-            }
-
-        });
-
+        handleAddingRollToOpenFrames(newRoll);
         calculateGameScore();
         checkIfGameIsOver();
 
@@ -102,6 +82,48 @@ public class BowlingGameModel {
             }
 
         }
+
+    }
+
+    private boolean gameIsOpenForAnotherFrame(FrameModel lastFrame){
+
+        return (lastFrame.isSpare()
+                || lastFrame.isStrike()
+                || !lastFrame.isFrameOpenToAnyRoll())
+
+                && (gameFrames.size() < MAX_GAME_FRAMES);
+
+    }
+
+    private boolean gameHasNoFramesYet(){
+
+        return gameFrames.isEmpty();
+
+    }
+
+    private FrameModel getLastGameFrame(){
+
+        return gameFrames.get(gameFrames.size() - 1);
+
+    }
+
+    private void addFrameToGameFrames(FrameModel newFrame){
+
+        gameFrames.add(newFrame);
+
+    }
+
+    private void handleAddingRollToOpenFrames(RollDto roll){
+
+        gameFrames.forEach(frame -> {
+
+            if(frame.isFrameOpenToAnyRoll()){
+
+                frame.handleAddingNewRoll(roll);
+
+            }
+
+        });
 
     }
 
