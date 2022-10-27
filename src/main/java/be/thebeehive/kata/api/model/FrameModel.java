@@ -1,6 +1,7 @@
 package be.thebeehive.kata.api.model;
 
 import be.thebeehive.kata.api.dto.RollDto;
+import be.thebeehive.kata.api.errorhandling.exception.IllegalSumOfRollsInFrameException;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,8 +16,6 @@ public class FrameModel {
 
     private final int SPARE_FRAME_SIZE = 2;
     private final int PIN_AMOUNT = 10;
-
-
 
     private List<RollDto> frameRolls = new ArrayList<>();
 
@@ -41,6 +40,12 @@ public class FrameModel {
     }
 
     public void handleAddingNewRoll(RollDto newRoll){
+
+        if(isIllegalThrow(newRoll)){
+
+            throw new IllegalSumOfRollsInFrameException("Illegal throw: there are only " + calculateRemainingPins() + "  pin/s remaining");
+
+        }
 
         frameRolls.add(newRoll);
         updateFrameTags();
@@ -69,19 +74,34 @@ public class FrameModel {
 
     public void checkIfFrameIsOpenForRolls(int currentScore){
 
-        if(frameRolls.size() == 3 && isStrike){
+        if(frameRolls.size() == 3
+                && (isStrike || isSpare)){
 
             isFrameOpenToAnyRoll = false;
 
-        } else if(frameRolls.size() == 3 && isSpare){
-
-            isFrameOpenToAnyRoll = false;
-
-        } else if(frameRolls.size() == 2 && currentScore != PIN_AMOUNT && !isStrike && !isSpare){
+        } else if(frameRolls.size() == 2
+                && currentScore != PIN_AMOUNT
+                && !isStrike
+                && !isSpare){
 
             isFrameOpenToAnyRoll = false;
 
         }
+
+    }
+
+    public boolean isIllegalThrow(RollDto roll){
+
+        return !frameRolls.isEmpty()
+                && !isStrike
+                && !isSpare
+                && frameRolls.get(0).pins() + roll.pins() > 10;
+
+    }
+
+    public int calculateRemainingPins(){
+
+        return PIN_AMOUNT - frameRolls.get(0).pins();
 
     }
 

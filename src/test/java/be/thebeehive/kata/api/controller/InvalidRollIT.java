@@ -99,4 +99,17 @@ class InvalidRollIT extends BaseIntegrationTest {
                 ).andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Game over. Final score is 300"));
     }
+
+    @Test
+    void rollWithSumOfTotalOfMoreThanMaxPinsReturnsExpectedException() throws Exception {
+        consecutiveRolls(gameId, 9);
+
+        mockMvc.perform(
+                        post(String.format("/bowling/%s", gameId))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(serialize(new RollDto(2)))
+                ).andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Illegal number of pins"));
+
+    }
 }
