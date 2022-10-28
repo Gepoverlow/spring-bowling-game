@@ -109,7 +109,7 @@ class InvalidRollIT extends BaseIntegrationTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(serialize(new RollDto(2)))
                 ).andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("Illegal number of pins"));
+                .andExpect(jsonPath("$.message").value("Illegal throw: there are only 1  pin/s remaining"));
 
     }
 }

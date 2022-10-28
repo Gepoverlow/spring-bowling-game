@@ -9,7 +9,6 @@ import java.util.List;
 
 @Getter
 @Setter
-//TODO: PUBLIC methods need to go on top
 public class BowlingGameModel {
 
     private final int MAX_GAME_FRAMES = 10;

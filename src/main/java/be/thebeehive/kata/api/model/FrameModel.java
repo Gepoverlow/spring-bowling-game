@@ -14,6 +14,8 @@ public class FrameModel {
 
     private final int STRIKE_FRAME_SIZE = 1;
     private final int SPARE_FRAME_SIZE = 2;
+    private final int TOTAL_SPECIAL_FRAME_ROLLS = 3;
+    private final int TOTAL_REGULAR_FRAME_ROLLS = 2;
     private final int PIN_AMOUNT = 10;
     private List<RollDto> frameRolls = new ArrayList<>();
     private boolean isSpare = false;
@@ -69,12 +71,12 @@ public class FrameModel {
 
     private void checkIfFrameIsOpenForRolls(int currentScore){
 
-        if(frameRolls.size() == 3
+        if(frameRolls.size() == TOTAL_SPECIAL_FRAME_ROLLS
                 && (isStrike || isSpare)){
 
             isFrameOpenToAnyRoll = false;
 
-        } else if(frameRolls.size() == 2
+        } else if(frameRolls.size() == TOTAL_REGULAR_FRAME_ROLLS
                 && currentScore != PIN_AMOUNT
                 && !isStrike
                 && !isSpare){
@@ -90,7 +92,7 @@ public class FrameModel {
         return !frameRolls.isEmpty()
                 && !isStrike
                 && !isSpare
-                && frameRolls.get(0).pins() + roll.pins() > 10;
+                && frameRolls.get(0).pins() + roll.pins() > PIN_AMOUNT;
 
     }
 
