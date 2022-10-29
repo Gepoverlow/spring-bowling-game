@@ -15,16 +15,11 @@ import org.springframework.stereotype.Service;
 public class BowlingGameService {
 
    private final BowlingGameMapper bowlingGameMapper;
-
    private final BowlingGameRepository bowlingGameRepository;
 
     public BowlingGameDto createBowlingGame(CreateGameDto createGameDto){
 
-        BowlingGameModel bowlingGame = bowlingGameMapper.createBowlingGameDtoToBowlingGameModel(createGameDto);
-
-        bowlingGameRepository.addNewBowlingGame(bowlingGame.getGameId(), bowlingGame);
-
-        return new BowlingGameDto(bowlingGame.getGameId(), bowlingGame.getName() , bowlingGame.getScore());
+        return bowlingGameRepository.addNewBowlingGame(bowlingGameMapper.createGameDtoToBowlingGameModel(createGameDto));
 
     }
 
@@ -44,6 +39,15 @@ public class BowlingGameService {
 
     }
 
+    public BowlingGameDto updateGameName(String gameId, String newName){
+
+        BowlingGameModel foundBowlingGame = bowlingGameRepository.findBowlingGameByGameId(gameId);
+
+        foundBowlingGame.setName(newName);
+
+        return new BowlingGameDto(foundBowlingGame.getGameId(), foundBowlingGame.getName(), foundBowlingGame.getScore());
+
+    }
 
 
 }

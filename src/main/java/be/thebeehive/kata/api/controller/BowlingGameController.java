@@ -3,6 +3,8 @@ package be.thebeehive.kata.api.controller;
 import be.thebeehive.kata.api.dto.BowlingGameDto;
 import be.thebeehive.kata.api.dto.CreateGameDto;
 import be.thebeehive.kata.api.dto.RollDto;
+import be.thebeehive.kata.api.dto.UpdateGameDto;
+import be.thebeehive.kata.api.model.BowlingGameModel;
 import be.thebeehive.kata.api.service.BowlingGameService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +35,12 @@ public class BowlingGameController {
 
     }
 
-    //TODO: add endpoint to update the name of a game
-    //TODO: write IT's for this also
+    @PutMapping(value = "/bowling/{gameId}")
+    public BowlingGameDto updateGameName(@PathVariable String gameId, @Valid @RequestBody UpdateGameDto updateGameDto){
+
+        log.info("Changing game name with id {} to {} ", gameId, updateGameDto.name());
+        return bowlingGameService.updateGameName(gameId, updateGameDto.name());
+
+    }
 
 }

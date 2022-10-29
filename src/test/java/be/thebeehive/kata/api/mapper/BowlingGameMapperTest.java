@@ -25,7 +25,7 @@ public class BowlingGameMapperTest {
 
         String name = FAKER.starTrek().character();
         CreateGameDto createGameDto = new CreateGameDto(name);
-        BowlingGameModel bowlingGameModel = bowlingGameMapper.createBowlingGameDtoToBowlingGameModel(createGameDto);
+        BowlingGameModel bowlingGameModel = bowlingGameMapper.createGameDtoToBowlingGameModel(createGameDto);
         assertThat(bowlingGameModel.getName()).isEqualTo(name);
         assertThat(bowlingGameModel.getScore()).isEqualTo(0);
         assertThat(bowlingGameModel.getGameId()).isNotNull();

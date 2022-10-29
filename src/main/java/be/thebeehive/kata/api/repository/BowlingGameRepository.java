@@ -1,5 +1,6 @@
 package be.thebeehive.kata.api.repository;
 
+import be.thebeehive.kata.api.dto.BowlingGameDto;
 import be.thebeehive.kata.api.errorhandling.exception.BowlingGameNotFoundException;
 import be.thebeehive.kata.api.model.BowlingGameModel;
 import org.springframework.stereotype.Repository;
@@ -24,9 +25,11 @@ public class BowlingGameRepository {
 
    }
 
-   public void addNewBowlingGame(String gameId, BowlingGameModel newBowlingGame){
+   public BowlingGameDto addNewBowlingGame(BowlingGameModel newBowlingGame){
 
-      bowlingGames.put(gameId, newBowlingGame);
+      bowlingGames.put(newBowlingGame.getGameId(), newBowlingGame);
+
+      return new BowlingGameDto(newBowlingGame.getGameId(), newBowlingGame.getName() , newBowlingGame.getScore());
 
    }
 

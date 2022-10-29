@@ -7,12 +7,12 @@ import org.mapstruct.Mapping;
 
 import java.util.UUID;
 
-//TODO: test this
 @Mapper(componentModel = "spring", imports = UUID.class)
+
 public interface BowlingGameMapper {
 
     @Mapping(target = "score", constant = "0")
     @Mapping(target = "gameId", expression = "java( UUID.randomUUID().toString() )")
-    BowlingGameModel createBowlingGameDtoToBowlingGameModel(CreateGameDto createGameDto);
+    BowlingGameModel createGameDtoToBowlingGameModel(CreateGameDto createGameDto);
 
 }
