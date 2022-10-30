@@ -2,14 +2,20 @@ package be.thebeehive.kata.api.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import be.thebeehive.kata.api.dto.BowlingGameDto;
+import be.thebeehive.kata.api.dto.CreateGameDto;
 import be.thebeehive.kata.api.dto.UpdateGameDto;
 import be.thebeehive.kata.util.BaseIntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class UpdateGameNameIT extends BaseIntegrationTest {
@@ -44,6 +50,26 @@ public class UpdateGameNameIT extends BaseIntegrationTest {
 
     }
 
-    //TODO: set up method that tests for empty / bad requests on update game name
+    @Test
+    void updateGameWithMissingBodyShouldReturnBadRequestWithExpectedMessage() throws Exception {
+        mockMvc.perform(
+                        put(String.format("/bowling/%s", gameId))
+                ).andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Invalid request. Verify all required data is included"));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {" ", "\t", "\n"})
+    void updateGameWithEmptyNameShouldReturnBadRequestWithExpectedMessage(String name) throws Exception {
+        UpdateGameDto updateGameDto = new UpdateGameDto(name);
+
+        mockMvc.perform(
+                        put(String.format("/bowling/%s", gameId))
+                                .content(serialize(updateGameDto))
+                                .contentType(MediaType.APPLICATION_JSON)
+                ).andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("name:\tName is required to update the game name"));
+    }
 
 }
