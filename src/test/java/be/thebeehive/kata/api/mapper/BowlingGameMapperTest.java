@@ -1,6 +1,7 @@
 package be.thebeehive.kata.api.mapper;
 
 import be.thebeehive.kata.api.dto.CreateGameDto;
+import be.thebeehive.kata.api.entities.BowlingGameEntity;
 import be.thebeehive.kata.api.model.BowlingGameModel;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.Test;
@@ -25,10 +26,10 @@ public class BowlingGameMapperTest {
 
         String name = FAKER.starTrek().character();
         CreateGameDto createGameDto = new CreateGameDto(name);
-        BowlingGameModel bowlingGameModel = bowlingGameMapper.createGameDtoToBowlingGameModel(createGameDto);
-        assertThat(bowlingGameModel.getName()).isEqualTo(name);
-        assertThat(bowlingGameModel.getScore()).isEqualTo(0);
-        assertThat(bowlingGameModel.getGameId()).isNotNull();
+        BowlingGameEntity bowlingGameEntity = bowlingGameMapper.createGameDtoToBowlingGameEntity(createGameDto);
+        assertThat(bowlingGameEntity.getName()).isEqualTo(name);
+        assertThat(bowlingGameEntity.getScore()).isEqualTo(0);
+        assertThat(bowlingGameEntity.getGameId()).isNotNull();
 
     }
 

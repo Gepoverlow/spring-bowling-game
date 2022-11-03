@@ -4,8 +4,8 @@ import be.thebeehive.kata.api.dto.BowlingGameDto;
 import be.thebeehive.kata.api.dto.CreateGameDto;
 import be.thebeehive.kata.api.dto.RollDto;
 import be.thebeehive.kata.api.dto.UpdateGameDto;
-import be.thebeehive.kata.api.model.BowlingGameModel;
 import be.thebeehive.kata.api.service.BowlingGameService;
+import be.thebeehive.kata.api.service.BowlingGameServiceV2;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +17,7 @@ import javax.validation.Valid;
 @AllArgsConstructor
 @Slf4j
 public class BowlingGameController {
-    private final BowlingGameService bowlingGameService;
+    private final BowlingGameServiceV2 bowlingGameService;
 
     @PostMapping(value = "/bowling")
     public BowlingGameDto createBowlingGame(@Valid @RequestBody CreateGameDto createGameDto) {
@@ -33,14 +33,14 @@ public class BowlingGameController {
         log.info("Performing new roll with {} pins", rollDto.pins());
         return bowlingGameService.performBowlingRoll(gameId, rollDto);
 
-    }
+     }
 
-    @PutMapping(value = "/bowling/{gameId}")
-    public BowlingGameDto updateGameName(@PathVariable String gameId, @Valid @RequestBody UpdateGameDto updateGameDto){
+   // @PutMapping(value = "/bowling/{gameId}")
+   // public BowlingGameDto updateGameName(@PathVariable String gameId, @Valid @RequestBody UpdateGameDto updateGameDto){
 
-        log.info("Changing game name with id {} to {} ", gameId, updateGameDto.name());
-        return bowlingGameService.updateGameName(gameId, updateGameDto.name());
+       // log.info("Changing game name with id {} to {} ", gameId, updateGameDto.name());
+       // return bowlingGameService.updateGameName(gameId, updateGameDto.name());
 
-    }
+   // }
 
-}
+ }

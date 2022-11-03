@@ -17,11 +17,11 @@ public class BowlingGameService {
    private final BowlingGameMapper bowlingGameMapper;
    private final BowlingGameRepository bowlingGameRepository;
 
-    public BowlingGameDto createBowlingGame(CreateGameDto createGameDto){
+  //  public BowlingGameDto createBowlingGame(CreateGameDto createGameDto){
 
-        return bowlingGameRepository.addNewBowlingGame(bowlingGameMapper.createGameDtoToBowlingGameModel(createGameDto));
+       // return bowlingGameRepository.addNewBowlingGame(bowlingGameMapper.createGameDtoToBowlingGameModel(createGameDto));
 
-    }
+   // }
 
     public BowlingGameDto performBowlingRoll(String gameId, RollDto rollDto){
 
