@@ -4,6 +4,7 @@ import be.thebeehive.kata.api.dto.RollDto;
 import be.thebeehive.kata.api.errorhandling.exception.IllegalSumOfRollsInFrameException;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -15,17 +16,15 @@ import java.util.List;
 public class FrameEntity {
 
     @Id
+    @GeneratedValue(generator = "system-uuid" )
+    @GenericGenerator(name="system-uuid", strategy = "uuid")
     private String frameId;
-
-    @ManyToOne
-    private BowlingGameEntity parentGame;
-
     private final int STRIKE_FRAME_SIZE = 1;
     private final int SPARE_FRAME_SIZE = 2;
     private final int TOTAL_SPECIAL_FRAME_ROLLS = 3;
     private final int TOTAL_REGULAR_FRAME_ROLLS = 2;
     private final int PIN_AMOUNT = 10;
-    @OneToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     private List<RollEntity> frameRolls = new ArrayList<>();
     private boolean isSpare = false;
     private boolean isStrike = false;

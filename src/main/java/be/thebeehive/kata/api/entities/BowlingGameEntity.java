@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -26,7 +27,7 @@ public class BowlingGameEntity {
     private String name;
     private int score;
     private boolean isGameOver;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<FrameEntity> gameFrames = new ArrayList<>();
     private final int MAX_GAME_FRAMES = 10;
 

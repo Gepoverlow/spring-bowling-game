@@ -7,9 +7,13 @@ import be.thebeehive.kata.api.entities.BowlingGameEntity;
 import be.thebeehive.kata.api.errorhandling.exception.BowlingGameNotFoundException;
 import be.thebeehive.kata.api.errorhandling.exception.GameOverException;
 import be.thebeehive.kata.api.mapper.BowlingGameMapper;
+import be.thebeehive.kata.api.repository.BowlingGameRepository;
 import be.thebeehive.kata.api.repository.BowlingGameRepositoryV2;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -18,6 +22,7 @@ public class BowlingGameServiceV2 {
     private final BowlingGameMapper bowlingGameMapper;
     private final BowlingGameRepositoryV2 bowlingGameRepo;
 
+    @Transactional
     public BowlingGameDto createBowlingGame(CreateGameDto createGameDto){
 
         BowlingGameEntity bowlingGameEntity = bowlingGameMapper.createGameDtoToBowlingGameEntity(createGameDto);
@@ -28,26 +33,32 @@ public class BowlingGameServiceV2 {
 
      }
 
-     public BowlingGameDto performBowlingRoll(String gameId, RollDto rollDto){
+     @Transactional
+     public BowlingGameDto performBowlingRoll(String gameId, RollDto rollDto) {
 
-        BowlingGameEntity foundBowlingGame = bowlingGameRepo.findByGameId(gameId);
+         Optional<BowlingGameEntity> foundBowlingGameOptional = bowlingGameRepo.findById(gameId);
 
-        if(foundBowlingGame == null){
+         if (foundBowlingGameOptional.isEmpty()) {
 
-            throw new BowlingGameNotFoundException("Game with id " + gameId + " not found");
+             throw new BowlingGameNotFoundException("Game with id " + gameId + " not found");
 
-        }
+         }
 
-        if(foundBowlingGame.isGameOver()){
+         BowlingGameEntity foundBowlingGame = foundBowlingGameOptional.get();
 
-            throw new GameOverException("Game over. Final score is " + foundBowlingGame.getScore());
+         if (foundBowlingGame.isGameOver()) {
 
-        }
+             throw new GameOverException("Game over. Final score is " + foundBowlingGame.getScore());
 
-        foundBowlingGame.handleScoreCalculation(bowlingGameMapper.rollDtoToRollEntity(rollDto));
+         }
 
-        return bowlingGameMapper.bowlingGameEntityToDto(foundBowlingGame);
+         foundBowlingGame.handleScoreCalculation(bowlingGameMapper.rollDtoToRollEntity(rollDto));
 
-     }
+        // bowlingGameRepo.save(foundBowlingGame);
+
+         return bowlingGameMapper.bowlingGameEntityToDto(foundBowlingGame);
+
+         }
+
 
 }
