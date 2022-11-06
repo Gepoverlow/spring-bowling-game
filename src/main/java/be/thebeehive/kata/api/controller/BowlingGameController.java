@@ -3,9 +3,8 @@ package be.thebeehive.kata.api.controller;
 import be.thebeehive.kata.api.dto.BowlingGameDto;
 import be.thebeehive.kata.api.dto.CreateGameDto;
 import be.thebeehive.kata.api.dto.RollDto;
-import be.thebeehive.kata.api.dto.UpdateGameDto;
+import be.thebeehive.kata.api.entities.BowlingGameEntity;
 import be.thebeehive.kata.api.service.BowlingGameService;
-import be.thebeehive.kata.api.service.BowlingGameServiceV2;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +16,7 @@ import javax.validation.Valid;
 @AllArgsConstructor
 @Slf4j
 public class BowlingGameController {
-    private final BowlingGameServiceV2 bowlingGameService;
+    private final BowlingGameService bowlingGameService;
 
     @PostMapping(value = "/bowling")
     public BowlingGameDto createBowlingGame(@Valid @RequestBody CreateGameDto createGameDto) {

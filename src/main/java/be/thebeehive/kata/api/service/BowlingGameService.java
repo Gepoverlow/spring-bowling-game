@@ -3,51 +3,61 @@ package be.thebeehive.kata.api.service;
 import be.thebeehive.kata.api.dto.BowlingGameDto;
 import be.thebeehive.kata.api.dto.CreateGameDto;
 import be.thebeehive.kata.api.dto.RollDto;
+import be.thebeehive.kata.api.entities.BowlingGameEntity;
+import be.thebeehive.kata.api.errorhandling.exception.BowlingGameNotFoundException;
 import be.thebeehive.kata.api.errorhandling.exception.GameOverException;
 import be.thebeehive.kata.api.mapper.BowlingGameMapper;
-import be.thebeehive.kata.api.model.BowlingGameModel;
 import be.thebeehive.kata.api.repository.BowlingGameRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class BowlingGameService {
 
-   private final BowlingGameMapper bowlingGameMapper;
-   private final BowlingGameRepository bowlingGameRepository;
+    private final BowlingGameMapper bowlingGameMapper;
+    private final BowlingGameRepository bowlingGameRepo;
 
-  //  public BowlingGameDto createBowlingGame(CreateGameDto createGameDto){
+    @Transactional
+    public BowlingGameDto createBowlingGame(CreateGameDto createGameDto){
 
-       // return bowlingGameRepository.addNewBowlingGame(bowlingGameMapper.createGameDtoToBowlingGameModel(createGameDto));
+        BowlingGameEntity bowlingGameEntity = bowlingGameMapper.createGameDtoToBowlingGameEntity(createGameDto);
 
-   // }
+        bowlingGameRepo.save(bowlingGameEntity);
 
-    public BowlingGameDto performBowlingRoll(String gameId, RollDto rollDto){
+        return bowlingGameMapper.bowlingGameEntityToDto(bowlingGameEntity);
 
-        BowlingGameModel foundBowlingGame = bowlingGameRepository.findBowlingGameByGameId(gameId);
+     }
 
-        if(foundBowlingGame.isGameOver()){
+     @Transactional
+     public BowlingGameDto performBowlingRoll(String gameId, RollDto rollDto) {
 
-            throw new GameOverException("Game over. Final score is " + foundBowlingGame.getScore());
+         Optional<BowlingGameEntity> foundBowlingGameOptional = bowlingGameRepo.findById(gameId);
 
-        }
+         if (foundBowlingGameOptional.isEmpty()) {
 
-        foundBowlingGame.handleScoreCalculation(rollDto);
+             throw new BowlingGameNotFoundException("Game with id " + gameId + " not found");
 
-       return new BowlingGameDto(foundBowlingGame.getGameId(), foundBowlingGame.getName(), foundBowlingGame.getScore());
+         }
 
-    }
+         BowlingGameEntity foundBowlingGame = foundBowlingGameOptional.get();
 
-    public BowlingGameDto updateGameName(String gameId, String newName){
+         if (foundBowlingGame.isGameOver()) {
 
-        BowlingGameModel foundBowlingGame = bowlingGameRepository.findBowlingGameByGameId(gameId);
+             throw new GameOverException("Game over. Final score is " + foundBowlingGame.getScore());
 
-        foundBowlingGame.setName(newName);
+         }
 
-        return new BowlingGameDto(foundBowlingGame.getGameId(), foundBowlingGame.getName(), foundBowlingGame.getScore());
+         foundBowlingGame.handleScoreCalculation(bowlingGameMapper.rollDtoToRollEntity(rollDto));
 
-    }
+        // bowlingGameRepo.save(foundBowlingGame);
+
+         return bowlingGameMapper.bowlingGameEntityToDto(foundBowlingGame);
+
+         }
 
 
 }

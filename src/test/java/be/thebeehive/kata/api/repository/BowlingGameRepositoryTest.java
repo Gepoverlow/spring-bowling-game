@@ -1,51 +1,59 @@
 package be.thebeehive.kata.api.repository;
 
-import be.thebeehive.kata.api.dto.BowlingGameDto;
-import be.thebeehive.kata.api.model.BowlingGameModel;
-import org.junit.jupiter.api.BeforeEach;
+import be.thebeehive.kata.api.entities.BowlingGameEntity;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
+@DataJpaTest
 public class BowlingGameRepositoryTest {
 
     @Autowired
-    BowlingGameRepository bowlingGameRepository;
+    private TestEntityManager testEntityManager;
 
-    private BowlingGameModel bowlingGameModel;
+    @Autowired
+    private BowlingGameRepository bowlingGameRepository;
 
-    @BeforeEach
-    public void setUp(){
+    @Test
+    public void shouldReturnBowlingGameEntityOnSave(){
 
-        bowlingGameModel = new BowlingGameModel();
-        bowlingGameModel.setName("Testing-Game-Name");
-        bowlingGameModel.setGameId("aze-aze-aze-123");
-        bowlingGameModel.setScore(0);
+        //given
+        BowlingGameEntity newBowlingGameEntity = new BowlingGameEntity();
+        newBowlingGameEntity.setName("Test-Game");
+        newBowlingGameEntity.setScore(0);
+
+        //when
+        BowlingGameEntity savedBowlingGameEntity = bowlingGameRepository.save(newBowlingGameEntity);
+
+        //then
+        assertThat(savedBowlingGameEntity).isNotNull();
 
     }
 
     @Test
-    public void shouldAddNewGameSuccessfullyAndReturnBowlingGameDto(){
+    public void shouldFindBowlingGameWithGivenGameId(){
 
-        BowlingGameDto gameDto = bowlingGameRepository.addNewBowlingGame(bowlingGameModel);
-        assertThat(gameDto).isNotNull();
+        //given
+        BowlingGameEntity newBowlingGameEntity = new BowlingGameEntity();
+        newBowlingGameEntity.setName("Test-Game");
+        newBowlingGameEntity.setScore(0);
+        testEntityManager.persist(newBowlingGameEntity);
+        testEntityManager.flush();
+
+        //when
+        Optional<BowlingGameEntity> foundBowlingGameOpt = bowlingGameRepository.findById(newBowlingGameEntity.getGameId());
+
+        //then
+        assertThat(newBowlingGameEntity.getGameId()).isNotNull();
+        assertThat(foundBowlingGameOpt).isNotNull();
 
     }
-
-    @Test
-    public void shouldFindBowlingGameWithValidGameId(){
-
-        bowlingGameRepository.addNewBowlingGame(bowlingGameModel);
-        BowlingGameModel foundBowlingGameModel = bowlingGameRepository.findBowlingGameByGameId(bowlingGameModel.getGameId());
-        assertEquals(bowlingGameModel.getName(), foundBowlingGameModel.getName());
-
-    }
-
-    //TODO: Test case for when the searched game does not exists and the GameNotFoundException is thrown
-
 
 }

@@ -1,14 +1,9 @@
 package be.thebeehive.kata.api.entities;
-
-import be.thebeehive.kata.api.dto.RollDto;
-import be.thebeehive.kata.api.model.FrameModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;

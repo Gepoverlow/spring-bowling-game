@@ -2,19 +2,15 @@ package be.thebeehive.kata.api.service;
 
 import be.thebeehive.kata.api.dto.BowlingGameDto;
 import be.thebeehive.kata.api.dto.CreateGameDto;
+import be.thebeehive.kata.api.entities.BowlingGameEntity;
 import be.thebeehive.kata.api.mapper.BowlingGameMapper;
-import be.thebeehive.kata.api.mapper.BowlingGameMapperImpl;
-import be.thebeehive.kata.api.model.BowlingGameModel;
 import be.thebeehive.kata.api.repository.BowlingGameRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -22,32 +18,33 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith({MockitoExtension.class})
 @SpringBootTest
-//TODO: this doesnt work and have been a long time trying to figure it out, coming back to it later
-public class BowlingGameServiceTest {
+
+//TODO:::::::
+ public class BowlingGameServiceTest {
 
     @Autowired
     BowlingGameMapper bowlingGameMapper;
-    @Mock
+    @Autowired
     BowlingGameRepository bowlingGameRepository;
-    @InjectMocks
+    @Autowired
     BowlingGameService bowlingGameService;
 
-   // @Test
-   // public void shouldCreateGameSuccessfully(){
+    @Test
+    public void shouldCreateGameSuccessfully(){
 
-        //given - precondition or setup
-       // CreateGameDto createGameDto = new CreateGameDto("Testing-Game-Name");
-        //TODO: Why does this bowlingGameModel return null? is the injection of the mapper class done wrong?
-       // BowlingGameModel bowlingGameModel = bowlingGameMapper.createGameDtoToBowlingGameModel(createGameDto);
+        // given - precondition or setup
+        CreateGameDto createGameDto = new CreateGameDto("Testing-Game-Name");
 
-      //  when(bowlingGameRepository.addNewBowlingGame(any(BowlingGameModel.class))).thenReturn(new BowlingGameDto(bowlingGameModel.getGameId(), bowlingGameModel.getName(), bowlingGameModel.getScore()));
+        BowlingGameEntity bowlingGameEntity = bowlingGameMapper.createGameDtoToBowlingGameEntity(createGameDto);
 
-        //when - action or the behaviour that we are going test
-      //  BowlingGameDto bowlingGameDto = bowlingGameService.createBowlingGame(createGameDto);
+        when(bowlingGameRepository.save(any(BowlingGameEntity.class))).thenReturn(bowlingGameEntity);
 
-        //then - verify the output
-       // assertThat(bowlingGameDto).isNotNull();
+       // when - action or the behaviour that we are going test
+        BowlingGameDto bowlingGameDto = bowlingGameService.createBowlingGame(createGameDto);
 
-   // }
+       // then - verify the output
+        assertThat(bowlingGameDto).isNotNull();
+
+    }
 
 }

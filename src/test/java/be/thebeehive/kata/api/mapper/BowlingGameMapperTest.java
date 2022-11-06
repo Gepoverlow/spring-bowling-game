@@ -2,7 +2,6 @@ package be.thebeehive.kata.api.mapper;
 
 import be.thebeehive.kata.api.dto.CreateGameDto;
 import be.thebeehive.kata.api.entities.BowlingGameEntity;
-import be.thebeehive.kata.api.model.BowlingGameModel;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
