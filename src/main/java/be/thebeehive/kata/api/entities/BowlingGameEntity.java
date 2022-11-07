@@ -22,7 +22,7 @@ public class BowlingGameEntity {
     private String name;
     private int score;
     private boolean isGameOver;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<FrameEntity> gameFrames = new ArrayList<>();
     private final int MAX_GAME_FRAMES = 10;
 

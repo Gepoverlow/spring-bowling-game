@@ -23,7 +23,7 @@ public class FrameEntity {
     private final int TOTAL_SPECIAL_FRAME_ROLLS = 3;
     private final int TOTAL_REGULAR_FRAME_ROLLS = 2;
     private final int PIN_AMOUNT = 10;
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<RollEntity> frameRolls = new ArrayList<>();
     private boolean isSpare = false;
     private boolean isStrike = false;
