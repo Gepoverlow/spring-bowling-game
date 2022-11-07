@@ -3,6 +3,7 @@ package be.thebeehive.kata.api.service;
 import be.thebeehive.kata.api.dto.BowlingGameDto;
 import be.thebeehive.kata.api.dto.CreateGameDto;
 import be.thebeehive.kata.api.dto.RollDto;
+import be.thebeehive.kata.api.dto.UpdateGameDto;
 import be.thebeehive.kata.api.entities.BowlingGameEntity;
 import be.thebeehive.kata.api.errorhandling.exception.BowlingGameNotFoundException;
 import be.thebeehive.kata.api.errorhandling.exception.GameOverException;
@@ -59,5 +60,24 @@ public class BowlingGameService {
 
          }
 
+         public BowlingGameDto updateGameName(String gameId, String newName){
+
+            Optional<BowlingGameEntity> foundBowlingGameOpt = bowlingGameRepo.findById(gameId);
+
+            if(foundBowlingGameOpt.isEmpty()){
+
+                throw new BowlingGameNotFoundException("Game with id " + gameId + " not found");
+
+            }
+
+             BowlingGameEntity foundBowlingGame = foundBowlingGameOpt.get();
+
+            foundBowlingGame.setName(newName);
+
+           // bowlingGameRepo.save(foundBowlingGame);
+
+            return bowlingGameMapper.bowlingGameEntityToDto(foundBowlingGame);
+
+         }
 
 }
